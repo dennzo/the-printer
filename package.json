@@ -1,0 +1,25 @@
+{
+  "name": "the-printer",
+  "version": "1.0.0",
+  "description": "The printer, a prototype.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [
+    "print",
+    "pdf"
+  ],
+  "author": "Marcel <github@gameplayjdk.de>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "body": "^5.1.0",
+    "express": "^4.17.1",
+    "file-url": "^3.0.0",
+    "puppeteer": "^5.4.1"
+  },
+  "private": true,
+  "devDependencies": {
+    "paper-css": "^0.4.1"
+  }
+}
