@@ -155,6 +155,7 @@
                         response.json({
                             message: 'invalid request body',
                         });
+                        return;
                     }
 
                     const content = body.content;
