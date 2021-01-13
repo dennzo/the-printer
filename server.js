@@ -87,6 +87,8 @@
         optionObject.margin = configuration.margin;
         optionObject.preferCSSPageSize = configuration.pageOverride;
 
+        console.log(optionObject);
+
         return optionObject;
     }
 
