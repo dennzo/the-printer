@@ -1,5 +1,5 @@
 {
-  "name": "the-printer",
+  "name": "@excellens/the-printer",
   "version": "1.0.0",
   "description": "The printer, a prototype.",
   "main": "server.js",
