@@ -101,6 +101,8 @@
      */
     async function getStream(content, configuration) {
         const page = await browser.newPage();
+        // Disable JS.
+        await page.setJavaScriptEnabled(false);
         await page.goto(content, {
             // https://github.com/puppeteer/puppeteer/blob/v5.3.0/docs/api.md#pagegotourl-options
         });
