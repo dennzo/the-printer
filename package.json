@@ -1,5 +1,5 @@
 {
-  "name": "@excellens/the-printer",
+  "name": "@made/the-printer",
   "version": "1.0.0",
   "description": "The printer, a prototype pdf service.",
   "main": "server.js",
@@ -16,7 +16,7 @@
     "body": "^5.1.0",
     "express": "^4.17.1",
     "file-url": "^3.0.0",
-    "puppeteer": "^5.4.1"
+    "puppeteer": "^5.5.0"
   },
   "private": true,
   "devDependencies": {

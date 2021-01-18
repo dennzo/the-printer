@@ -1,4 +1,4 @@
-# @excellens/the-printer
+# @made/the-printer
 
 ## License
 
