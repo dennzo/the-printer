@@ -1,5 +1,5 @@
 (async function () {
-    console.log('Copyright (c) 2020 Marcel, github@gameplayjdk.de');
+    console.log('Copyright (c) 2020-2021 Marcel, github@gameplayjdk.de');
 
     // Set up 'puppeteer'...
 
@@ -106,6 +106,9 @@
         await page.goto(content, {
             // https://github.com/puppeteer/puppeteer/blob/v5.3.0/docs/api.md#pagegotourl-options
         });
+
+        // Note: When some resource is not present in the pdf output, make sure it is available upon generation. The
+        //  network can cause a delay with no adherence to the wait-until option!
 
         const optionObject = mapConfiguration(configuration);
 
