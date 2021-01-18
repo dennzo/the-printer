@@ -4,7 +4,8 @@
   "description": "The printer, a prototype pdf service.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "start": "node server.js"
   },
   "keywords": [
     "print",
