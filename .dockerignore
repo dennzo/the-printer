@@ -1,0 +1,10 @@
+.git
+.gitignore
+.cache
+*.MD
+.DS_Store
+.thumbsdb
+*.postman_collection.json
+*/node_modules*
+npm-debug.log
+*/vendor*

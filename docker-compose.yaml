@@ -1,0 +1,16 @@
+version: '3.8'
+
+networks:
+  the_printer_service:
+    external:
+      name: the_printer_service
+
+services:
+  app:
+    build: ./
+    restart: always
+    security_opt:
+      - seccomp=/usr/local/var/www/made/the-printer/chrome.json
+    networks:
+      - the_printer_service
+
