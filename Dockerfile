@@ -19,6 +19,8 @@
 FROM ghcr.io/made/alpine-node:latest
 # TODO: Yes, latest for now. We will change this as soon as everything is tested and we will start with production deployments.
 
+LABEL org.opencontainers.image.source = "https://github.com/made/the-printer"
+
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/ \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
