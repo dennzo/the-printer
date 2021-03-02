@@ -1,11 +1,16 @@
-name: Build images for registry
+name: Build image for registry
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: ["master"]
+    tags:
+      - '**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+env:
+  GITHUB_TAG: ${GITHUB_REF#refs/*/}
 
 jobs:
 
@@ -16,6 +21,10 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
+      -
+        name: Get tag name
+        id: get_tag_name
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -30,22 +39,11 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
-        name: Build and Push - latest
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ secrets.REGISTRY_URL }}/made/the-printer:latest
-      -
         name: Build and Push - release
-        if: ${{ github.event.release.tag_name }}
+        if: startsWith(github.ref, 'refs/tags/')
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ secrets.REGISTRY_URL }}/made/the-printer:${{ github.event.release.tag_name }}
-      -
-        name: Build and Push - dev image
-        if: ${{ github.event.release.tag_name }}
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ secrets.REGISTRY_URL }}/made/the-printer:${{ github.event.release.tag_name }}-dev
+          tags: |
+            ${{ secrets.REGISTRY_URL }}/made/the-printer:${{ steps.get_tag_name.outputs.VERSION }}
+            ${{ secrets.REGISTRY_URL }}/made/the-printer:latest

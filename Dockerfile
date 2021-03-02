@@ -17,7 +17,7 @@
 # @see https://github.com/Zenika/alpine-chrome
 
 FROM ghcr.io/made/alpine-node:latest
-# Yes, latest for now. We will change this as soon as everything is tested and we will start with production deployments.
+# TODO: Yes, latest for now. We will change this as soon as everything is tested and we will start with production deployments.
 
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/ \
@@ -27,6 +27,7 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
 USER root
 
 # Installs latest Chromium package.
+# TODO: fixed version for each if we really use it this way
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
@@ -43,8 +44,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     wqy-zenhei \
     freetype-dev \
     ca-certificates \
-    nodejs \
-    yarn \
     && rm -rf /var/cache/* \
     && mkdir /var/cache/apk
 
