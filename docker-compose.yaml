@@ -1,18 +1,22 @@
 version: '3.8'
 
 networks:
-  the_printer_service:
-    external:
-      name: the_printer_service
+  default:
+    name: the_printer_service
+    external: true
 
 services:
   app:
     build: ./
-    restart: always
+    environment:
+      - "LISTEN_PORT=3000"
+      - "NPM_CONFIG_LOGLEVEL=verbose"
+      - "REQUEST_BODY_LIMIT=50mb"
+    restart: unless-stopped
     ports:
-    - 3000:3000
+    - '3000:3000'
     security_opt:
-      - seccomp=/usr/local/var/www/made/the-printer/chrome.json
+      - seccomp=./chrome.json
     networks:
-      - the_printer_service
+      - default
 

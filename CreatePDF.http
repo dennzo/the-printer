@@ -1,0 +1,21 @@
+POST /pdf HTTP/2.0
+Host: http://127.0.0.1:3000
+Content-Type: application/json
+
+{
+  "title": "Test PDF Title",
+  "body": "<div style=\"break-after: page;\"> <p>page 1</p></div><div> <p>page 2</p></div><div style=\"break-before: page;\"> <p>page 3</p></div>",
+  "head": "<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap'); body{background-color: #ffe8d2; font-family: 'Montserrat', sans-serif}.card{border: none}.logo{background-color: #eeeeeea8}.totals tr td{font-size: 13px}.footer{background-color: #eeeeeea8}.footer span{font-size: 12px}.product-qty span{font-size: 12px; color: #dedbdb}</style> <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi\" crossorigin=\"anonymous\">",
+  "configuration": {
+    "header": "<div class=\"header\" style=\"color:yellow; margin-left: 1cm; text-align: left;width: 297mm;font-size: 16px;\">Acme Ltd.</div>",
+    "footer": "<div style=\"color: green; margin-right: 1cm; text-align: right;width: 297mm;font-size: 16px;\"><span style=\"margin-right: 1cm\"><span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></span></div>",
+    "display_header_footer": true,
+    "display_content_background": true,
+    "page_orientation": "portrait",
+    "page_format": "A4",
+    "page_width": "",
+    "page_height": "",
+    "page_range": "",
+    "page_override": false
+  }
+}

@@ -16,26 +16,29 @@
 # Got some inspuration from
 # @see https://github.com/Zenika/alpine-chrome
 
-FROM ghcr.io/made/alpine-node:latest
-# TODO: Yes, latest for now. We will change this as soon as everything is tested and we will start with production deployments.
+FROM node:19.6-alpine3.17
 
-LABEL org.opencontainers.image.source = "https://github.com/made/the-printer"
+LABEL maintainer="Dennis Barlowe <d.barlowe@life-style.de>"
+LABEL org.opencontainers.image.source = "https://github.com/dennzo/the-printer"
 
-ENV CHROME_BIN=/usr/bin/chromium-browser \
+ENV NODE_ENV=production \
+    TZ=Europe/Berlin \
+    DOCUMENT_ROOT=/home/node/app \
+    NPM_CONFIG_LOGLEVEL=warn \
+    PATH=/home/node/scripts:${PATH} \
+    CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/ \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    GIT_BRANCH=main \
+    LISTEN_PORT=3000 \
+    REQUEST_BODY_LIMIT=2mb
+
 
 USER root
 
-# Installs latest Chromium package.
-# TODO: fixed version for each if we really use it this way
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/main" >> /etc/apk/repositories \
-    && apk upgrade -U -a \
-    && apk add \
+# Installing all dependencies
+# it may be necessary to install chromium in an officially supported version, but for now it seems to be working.
+# @see https://pptr.dev/chromium-support
+RUN apk update && apk add --no-cache \
     libstdc++ \
     chromium \
     harfbuzz \
@@ -43,16 +46,30 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     freetype \
     ttf-freefont \
     font-noto-emoji \
-    wqy-zenhei \
     freetype-dev \
     ca-certificates \
-    && rm -rf /var/cache/* \
-    && mkdir /var/cache/apk
+    curl \
+    && rm -rf /var/cache/apk
 
+# If you don't chown here, in some cases the owning user is root and you won't have access to any ressources.
+RUN mkdir ${DOCUMENT_ROOT} && chown -R node:node ${DOCUMENT_ROOT}
+
+COPY --chown=node . ${DOCUMENT_ROOT}
+
+# Switch to user node for non-root privileges
 USER node
 
-# Copy project files into the image and make sure it is user node.
-# If you don't chown here, in some cases the owning user is root and you won't have access to any ressources.
-COPY --chown=node . /home/node/app
 
-RUN run-npm-install
+# Change the workdir to the current app directory
+WORKDIR ${DOCUMENT_ROOT}
+
+RUN npm install --omit=dev \
+    && npm prune --omit=dev
+
+# Automatically restarts docker container with the policy `restart: always|unless-stopped` if supported by orchestration
+HEALTHCHECK --interval=30s --timeout=30s --start-period=10s \
+    CMD curl -f http://localhost:${LISTEN_PORT}/_health || kill 1
+
+EXPOSE ${LISTEN_PORT}
+
+CMD [ "npm", "run", "server-start"]
