@@ -14,12 +14,7 @@
  * @property {string}   page_width
  * @property {string}   page_height
  * @property {string}   page_range
- * @property {boolean}  page_override
- * @property {Object}   margin
- * @property {string}   margin.top
- * @property {string}   margin.right
- * @property {string}   margin.bottom
- * @property {string}   margin.left
+ * @property {boolean}  prefer_css_page_size
  */
 
 /**
@@ -49,7 +44,6 @@ export default function ConfigurationMapper(inputConfiguration) {
         format: inputConfiguration.page_format ?? undefined,
         width: inputConfiguration.page_width ?? '',
         height: inputConfiguration.page_height ?? '',
-        margin: inputConfiguration.margin ?? '0',
-        preferCSSPageSize: inputConfiguration.page_override ?? false,
+        preferCSSPageSize: inputConfiguration.prefer_css_page_size ?? true,
     };
 }

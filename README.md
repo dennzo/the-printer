@@ -97,7 +97,7 @@ This can be useful for example while developing to reload the JavaScript changes
     "page_width": "",
     "page_height": "",
     "page_range": "",
-    "page_override": false
+    "prefer_css_page_size": false
   }
 }
 
@@ -114,9 +114,16 @@ Beware, the styles for header and footer cannot be passed here, only for the bod
 
 ### Header and footer
 
-To actually display these the option `display_header_footer` must be set to true. Also the margins have to be set, since
-they are 0 by default.
+To actually display these the option `display_header_footer` must be set to true.     
+Also the margins have to be set, since they are 0 by default.    
+This can be by adding the margins in the @page css. If this is not working, make sure prefer_css_page_size is set to true (which is the default).
 You can specify HTML code in `header` and `footer`. CSS Code must be inline, this cannot be passed via head.
+
+```css
+@page {
+  margin: 0;
+}
+```
 
 #### Page Numbering
 
