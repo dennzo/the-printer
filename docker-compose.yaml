@@ -8,6 +8,7 @@ networks:
 services:
   app:
     build: ./
+    user: "node"
     environment:
       - "LISTEN_PORT=3000"
       - "NPM_CONFIG_LOGLEVEL=verbose"
@@ -19,4 +20,3 @@ services:
       - seccomp=./chrome.json
     networks:
       - default
-

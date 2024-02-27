@@ -16,10 +16,11 @@
 # Got some inspuration from
 # @see https://github.com/Zenika/alpine-chrome
 
-FROM node:19.6-alpine3.17
+FROM node:21.6-alpine3.18
+#FROM node:19.6-alpine3.17
 
 LABEL maintainer="Dennis Barlowe <d.barlowe@life-style.de>"
-LABEL org.opencontainers.image.source = "https://github.com/dennzo/the-printer"
+LABEL org.opencontainers.image.source="https://github.com/dennzo/the-printer"
 
 ENV NODE_ENV=production \
     TZ=Europe/Berlin \
@@ -31,7 +32,6 @@ ENV NODE_ENV=production \
     GIT_BRANCH=main \
     LISTEN_PORT=3000 \
     REQUEST_BODY_LIMIT=2mb
-
 
 USER root
 

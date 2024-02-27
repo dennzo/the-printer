@@ -1,6 +1,6 @@
 'use strict';
 
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import express from 'express';
 import PdfAction from "./Action/PdfAction.js";
 import HealthCheckAction from "./Action/HealthCheckAction.js";
@@ -17,6 +17,18 @@ import bodyParser from "body-parser";
     const browser = await puppeteer.launch({
         // Launch options if necessary.
         // https://github.com/puppeteer/puppeteer/blob/v5.3.0/docs/api.md#puppeteerlaunchoptions
+        headless: "new",
+        executablePath: "/usr/bin/chromium-browser",
+        skipDownload: true,
+        args: [
+            '--font-render-hinting=none',
+            '--force-color-profile=srgb',
+            '--disable-sync',
+            '--ignore-certificate-errors',
+            '--disable-gpu',
+            '--no-sandbox',
+            '--disable-speech-api',
+        ],
     });
 
     process.on('exit', async (code) => {

@@ -12,20 +12,34 @@ The seccomp cannot be added during builds, only later, since this is a security 
 Please refer the following statement to the docker-compose file where it is used.
 
 The file chrome.json is **NOT** within the container, it has to be placed outside on the host machine (so the path if
-from host machine).
+from host machine).    
 Mostly when placed in the same directory as the `docker-compose.yml` then just use `./chrome.json`
 
 ```yaml
-puppeteer:
-  image: <REGISTRY_PATH>
-  restart: unless-stopped
-  security_opt:
-    - seccomp=/path/on/host/to/chrome.json
+# docker-compose.yml
+version: '3.8'
+
+services:
+  the-printer:
+    image: <REGISTRY_PATH>
+    restart: unless-stopped
+    environment:
+      - "LISTEN_PORT=3000"
+      - "NPM_CONFIG_LOGLEVEL=verbose"
+      - "REQUEST_BODY_LIMIT=50mb"
+    ports:
+      - "127.0.0.1:3000:3000"
+#    volumes: # only for local development!
+#      - ./src/server.js:/home/node/app/server.js
+#      - ./src:/home/node/app/src
+    security_opt:
+      - seccomp=/path/on/host/system/to/chrome.json
 ```
 
 Or if using `docker run` then just add the following CLI option.
 
 ```bash
+# docker run cli command
 docker run --rm -it -p "3000:3000" --security-opt seccomp=/path/on/host/to/chrome.json <REGISTRY_PATH>
 ```
 
@@ -47,14 +61,14 @@ The health check also logs regularly, so just ignore these.
 
 ### Request Body Limit (in case of 413 Payload to large)
 
-When sending large requests you are likely to encounter a HTTP 413 Payload to large error.
+When sending large requests you are likely to encounter a HTTP 413 Payload to large error.    
 This can be configured direcly by passing the following environment variable.
 Default is 2mb.
 
 ```yaml
 # docker-compose.yaml
 environment:
-  - "REQUEST_BODY_LIMIT=5mb"
+  - "REQUEST_BODY_LIMIT=15mb"
 ```
 
 ## Monitoring and Restarts
@@ -63,24 +77,40 @@ We are using `restart: unless-stopped` to ensure the container restarts if it fa
 
 ### Health Check
 
-There is also an implementation in which the docker container is able to heal itself when if fails.
-It uses the internal `_health` script to determine whether the container is healthy and outputs it.
+There is also an implementation in which the docker container is able to heal itself when if fails.    
+It uses the internal `_health` script to determine whether the container is healthy and outputs it.    
 Please refer to the `HEALTHCHECK` directive within the Dockerfile.
 
-### Self Healing
+This can be deactivated by
 
+
+```yaml
+# docker-compose.yaml
+    healthcheck:
+      test: [ "CMD", "none" ]
+```
+
+```shell
+# docker run
+ docker run --no-healthcheck
+```
+
+### Self Healing
 The container does not automatically restart itself in case it is unhealthy,
-this must be supported and configured via the orchestration system.
+this must be supported and configured via the orchestration system.    
 For example in Kubernetes unhealthy containers can automatically be restarted.
 
 ### Restart manually
-
-If you want to restart the node process without restarting the container, just call the route `_restart`.
-This can be useful for example while developing to reload the JavaScript changes.
+If you want to restart the node process without restarting the container, just call the route `_restart`.    
+This can be useful for example while developing to reload the JavaScript changes.    
+It will only work, if the `restart: unless-stopped` or `restart: always` is set.
 
 ---
 
 ## Request and its Configuration Options
+
+You can pass any options from PDFOptions interface. 
+You can find these here: https://pptr.dev/api/puppeteer.pdfoptions
 
 ```json
 {
@@ -88,16 +118,16 @@ This can be useful for example while developing to reload the JavaScript changes
   "body": "<div>Content of the page</div>",
   "head": "<style></style>",
   "configuration": {
-    "header": "<div style=\"text-align: right;width: 297mm;font-size: 16px;\">SUP!</div>",
-    "footer": "<div style=\"text-align: right;width: 297mm;font-size: 16px;\"><span style=\"margin-right: 1cm\"><span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></span></div>",
-    "display_header_footer": true,
-    "display_content_background": true,
-    "page_orientation": "portrait",
-    "page_format": "A4",
-    "page_width": "",
-    "page_height": "",
-    "page_range": "",
-    "prefer_css_page_size": false
+    "headerTemplate": "<div style=\"text-align: right;width: 297mm;font-size: 16px;\">SUP!</div>",
+    "footerTemplate": "<div style=\"text-align: right;width: 297mm;font-size: 16px;\"><span style=\"margin-right: 1cm\"><span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></span></div>",
+    "displayHeaderFooter": true,
+    "printBackground": true,
+    "landscape": false,
+    "format": "A4",
+    "width": "",
+    "height": "",
+    "pageRanges": "",
+    "preferCSSPageSize": false
   }
 }
 
@@ -113,11 +143,11 @@ This is placed directly into the `<head>*</head>` tag. So you can also include f
 Beware, the styles for header and footer cannot be passed here, only for the body.
 
 ### Header and footer
-
 To actually display these the option `display_header_footer` must be set to true.     
 Also the margins have to be set, since they are 0 by default.    
-This can be by adding the margins in the @page css. If this is not working, make sure prefer_css_page_size is set to true (which is the default).
-You can specify HTML code in `header` and `footer`. CSS Code must be inline, this cannot be passed via head.
+This can be by adding the margins in the @page css. If this is not working, make sure prefer_css_page_size is set to true (which is the default).    
+You can specify HTML code within the configuration object in `headerTemplate` and `footerTemplate`. 
+CSS Code must be inline, this cannot be passed via head, also external stylesheets do **NOT** work.
 
 ```css
 @page {
@@ -159,7 +189,6 @@ https://pptr.dev/api/puppeteer.pdfoptions.prefercsspagesize
 ## Information regarding Chromium
 
 ### Configure the chromium browser
-
 https://chromeenterprise.google/policies/
 
 - JavaScript is Disabled by default!
@@ -170,13 +199,11 @@ https://chromeenterprise.google/policies/
 https://developer.chrome.com/blog/headless-chrome/#debugging-chrome-without-a-browser-ui
 
 ## Solutions to general problems
-
 - https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-on-alpine
 - https://www.xspdf.com/resolution/53997175.html
 - https://github.com/puppeteer/puppeteer/issues/6560
 
 ## Kernel Security (ex. seccomp, unprivileged_userns_clone)
-
 https://security.stackexchange.com/a/209533    
 Also the solution to the PID namespace problem.
 Like this chrome runs in a sandbox mode, which cannot load any malware, because it
@@ -184,13 +211,10 @@ is completely isolated from the host system and has no permissions for it.
 https://ndportmann.com/chrome-in-docker/
 
 ## Illustration to Chrome Sandboxing
-
 https://www.google.com/googlebooks/chrome/med_26.html
 
 ## Sources / References
-
 Got some inspiration from https://github.com/Zenika/alpine-chrome
 
 ## Supporting chinese alphabet
-
 You have to additionally install `wqy-zenhei`.

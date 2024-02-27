@@ -24,26 +24,27 @@
  * about the issue {@link https://github.com/puppeteer/puppeteer/issues/3834#issuecomment-662395671 here}.
  *
  * @param {Configuration}   inputConfiguration The configuration object.
- * @return {import('puppeteer').PDFOptions}
+ * @return {import('puppeteer-core').PDFOptions}
  */
 export default function ConfigurationMapper(inputConfiguration) {
     // https://github.com/puppeteer/puppeteer/blob/v5.3.0/docs/api.md#pagepdfoptions
 
     /**
-     * @type {import('puppeteer').PDFOptions}
+     * @type {import('puppeteer-core').PDFOptions}
      */
     return {
         path: null,
-        scale: inputConfiguration.scale ?? 1,
-        displayHeaderFooter: inputConfiguration.display_header_footer ?? false,
-        headerTemplate: inputConfiguration.header ?? '',
-        footerTemplate: inputConfiguration.footer ?? '',
-        printBackground: inputConfiguration.display_content_background ?? false,
-        landscape: ('landscape' === inputConfiguration.page_orientation ?? 'landscape'),
-        pageRanges: inputConfiguration.page_range ?? '',
-        format: inputConfiguration.page_format ?? undefined,
-        width: inputConfiguration.page_width ?? '',
-        height: inputConfiguration.page_height ?? '',
-        preferCSSPageSize: inputConfiguration.prefer_css_page_size ?? true,
+        scale: 1,
+        displayHeaderFooter: false,
+        headerTemplate: '',
+        footerTemplate: '',
+        printBackground: false,
+        landscape: false,
+        pageRanges: '',
+        format: 'A4',
+        width: '',
+        height: '',
+        preferCSSPageSize: true,
+        ...inputConfiguration ?? {}, // override defaults from request
     };
 }
